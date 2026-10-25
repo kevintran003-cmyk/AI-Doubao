@@ -8,7 +8,10 @@ return [
 
     // --- Gemini (Google) --- lấy key miễn phí tại https://aistudio.google.com/apikey
     'gemini_api_key' => '',
-    'gemini_model'   => 'gemini-2.5-flash',
+    // flash-lite trả lời ~1-2 giây, hợp với hội thoại. 'gemini-3.8-flash' kỹ hơn nhưng rất chậm.
+    'gemini_model'   => 'gemini-3.5-flash-lite',
+    // Mức suy nghĩ cho model không phải lite: 'low' hoặc 'high'. Để trống = mặc định của model.
+    'gemini_thinking' => '',
 
     // --- Claude (Anthropic) --- lấy key tại https://console.anthropic.com
     'claude_api_key' => 'sk-ant-...',

@@ -10,6 +10,7 @@ function fail(int $status, string $message): void {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') fail(405, 'Method not allowed');
+set_time_limit(120);
 
 $configFile = __DIR__ . '/config.php';
 if (!file_exists($configFile)) fail(500, 'Chưa có api/config.php trên server. Hãy copy config.sample.php thành config.php và điền API key.');
@@ -60,7 +61,7 @@ Trình độ học viên: {$level}. Chỉ dùng từ vựng và ngữ pháp phù
 Quy tắc:
 - Câu trả lời tiếng Trung ngắn gọn như hội thoại thật (1–3 câu), luôn kết thúc bằng một câu hỏi hoặc gợi ý để học viên nói tiếp.
 - Tin nhắn của học viên đến từ nhận dạng giọng nói nên có thể sai chữ đồng âm; hãy đoán ý họ muốn nói.
-- Nếu học viên nói sai ngữ pháp, dùng từ chưa tự nhiên, hoặc nói tiếng Việt, hãy điền phần correction: câu gốc, câu đúng/tự nhiên hơn bằng tiếng Trung, và giải thích ngắn bằng tiếng Việt. Nếu không có lỗi đáng kể thì has_error = false và các trường còn lại để chuỗi rỗng.
+- Nếu học viên nói sai ngữ pháp, dùng từ chưa tự nhiên, hoặc nói tiếng Việt, hãy điền phần correction: câu gốc, câu đúng/tự nhiên hơn bằng tiếng Trung, và giải thích ngắn hoàn toàn bằng tiếng Việt (không chen tiếng Anh; chỉ dùng chữ Hán khi trích ví dụ). Nếu không có lỗi đáng kể thì has_error = false và các trường còn lại để chuỗi rỗng.
 - Không dùng emoji, markdown hay ký hiệu đặc biệt trong reply_zh vì nó sẽ được đọc thành tiếng.
 
 Luôn trả lời đúng một đối tượng JSON dạng:
@@ -152,6 +153,10 @@ function call_gemini(array $config, string $system, array $history): string {
         'contents' => $contents,
         'generationConfig' => ['responseMimeType' => 'application/json'],
     ];
+    // Hội thoại cần trả lời nhanh: giảm mức "suy nghĩ" (Gemini 3 trở lên)
+    if (!empty($config['gemini_thinking'])) {
+        $body['generationConfig']['thinkingConfig'] = ['thinkingLevel' => $config['gemini_thinking']];
+    }
     [$status, $res] = http_post_json("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent", [
         'x-goog-api-key: ' . $config['gemini_api_key'],
     ], $body);
