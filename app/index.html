@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Luyện nói tiếng Trung với AI</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#4f7cff">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小老师">
+</head>
+<body>
+  <aside id="sidebar">
+    <a href="../" class="back">← Trang chủ</a>
+    <div class="brand">小老师 <span>Luyện nói tiếng Trung</span></div>
+
+    <label>Trình độ
+      <select id="level">
+        <option>HSK1</option><option selected>HSK2</option><option>HSK3</option>
+        <option>HSK4</option><option>HSK5</option><option>HSK6</option>
+      </select>
+    </label>
+
+    <label>Tình huống
+      <select id="scenario">
+        <option value="">Trò chuyện tự do</option>
+        <option>Tự giới thiệu bản thân, gia đình, sở thích</option>
+        <option>Gọi món ở nhà hàng Trung Quốc (AI đóng vai phục vụ)</option>
+        <option>Mua sắm và mặc cả ở chợ (AI đóng vai người bán)</option>
+        <option>Hỏi đường và đi taxi ở Bắc Kinh</option>
+        <option>Phỏng vấn xin việc (AI đóng vai nhà tuyển dụng)</option>
+        <option>Thuyết trình giới thiệu trung tâm tiếng Trung, trả lời câu hỏi đối tác</option>
+        <option value="custom">Tự nhập tình huống…</option>
+      </select>
+    </label>
+    <input id="customScenario" class="hidden" placeholder="Ví dụ: đặt phòng khách sạn">
+
+    <div class="toggles">
+      <label class="check"><input type="checkbox" id="showPinyin" checked> Hiện pinyin</label>
+      <label class="check"><input type="checkbox" id="showVi" checked> Hiện tiếng Việt</label>
+      <label class="check"><input type="checkbox" id="autoSpeak" checked> Tự đọc câu trả lời</label>
+      <label class="check"><input type="checkbox" id="handsFree"> Chế độ gọi điện (rảnh tay)</label>
+    </div>
+
+    <label>Tốc độ đọc <span id="rateLabel">0.9x</span>
+      <input type="range" id="rate" min="0.5" max="1.3" step="0.1" value="0.9">
+    </label>
+
+    <label id="accessWrap">Mã truy cập
+      <input id="accessCode" type="password" placeholder="Giáo viên cung cấp">
+    </label>
+
+    <button id="newChat" class="ghost">+ Cuộc hội thoại mới</button>
+    <button id="installBtn" class="install hidden">⬇ Cài ứng dụng lên máy</button>
+    <p id="iosHint" class="hint hidden">Trên iPhone: bấm nút Chia sẻ ⎋ rồi chọn "Thêm vào MH chính" để cài app.</p>
+    <p class="hint">Dùng Chrome hoặc Edge để nói bằng micro. Trình duyệt khác vẫn gõ chữ được.</p>
+  </aside>
+
+  <main>
+    <header>
+      <button id="menuBtn" aria-label="Mở cài đặt">☰</button>
+      <div>
+        <div class="title">小老师</div>
+        <div class="subtitle">AI có thể sai, hãy kiểm tra lại</div>
+      </div>
+    </header>
+
+    <section id="chat" aria-live="polite">
+      <div class="welcome">
+        <h1>你好！我是小老师。</h1>
+        <p>Bấm nút micro và nói tiếng Trung, mình sẽ trả lời và sửa lỗi cho bạn.</p>
+        <div class="starters">
+          <button>你好，我叫…</button>
+          <button>你今天怎么样？</button>
+          <button>我想练习点菜</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div id="status"></div>
+      <form id="composer">
+        <button type="button" id="micBtn" title="Bấm để nói">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+        </button>
+        <textarea id="text" rows="1" placeholder="Nói hoặc gõ tiếng Trung…"></textarea>
+        <button type="submit" id="sendBtn" title="Gửi">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 4l7 7-1.4 1.4L13 7.8V20h-2V7.8l-4.6 4.6L5 11z"/></svg>
+        </button>
+      </form>
+    </footer>
+  </main>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

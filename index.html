@@ -3,88 +3,215 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Luyện nói tiếng Trung với AI</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <title>小老师 – Luyện nói tiếng Trung với AI</title>
+  <link rel="icon" href="app/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="app/icons/icon-192.png">
+  <meta name="description" content="Luyện nói tiếng Trung với gia sư AI: nói qua micro, nghe AI trả lời, có pinyin, dịch tiếng Việt và sửa lỗi ngay.">
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1c1d21;
+      --muted: #6b6f78;
+      --border: #e3e5ea;
+      --accent: #4f7cff;
+      --accent-soft: #e8eefc;
+      --accent-text: #ffffff;
+      --fix-bg: #fff6e5;
+      --fix-border: #f3c26b;
+      --danger: #e5484d;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161719;
+        --panel: #1f2023;
+        --text: #ececef;
+        --muted: #9a9ca3;
+        --border: #2e3034;
+        --accent: #6e93ff;
+        --accent-soft: #252b3d;
+        --fix-bg: #2d2617;
+        --fix-border: #8a6a2c;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+    .logo { font-weight: 700; font-size: 20px; text-decoration: none; }
+    .logo span { color: var(--muted); font-weight: 400; font-size: 14px; margin-left: 6px; }
+    .btn {
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--accent-text);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .btn.small { padding: 8px 16px; font-size: 14px; }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      padding: 48px 0 72px;
+    }
+    .hero h1 { font-size: clamp(32px, 5vw, 50px); line-height: 1.15; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { color: var(--muted); font-size: 18px; margin: 0 0 28px; max-width: 34em; }
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Khung minh hoạ hội thoại */
+    .demo {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 20px 50px -30px rgba(0,0,0,.35);
+    }
+    .bubble-user { align-self: flex-end; background: var(--accent-soft); padding: 8px 14px; border-radius: 14px; }
+    .zh { font-size: 19px; }
+    .py, .vi { color: var(--muted); font-size: 14px; }
+    .vi { font-style: italic; }
+    .fix { background: var(--fix-bg); border-left: 3px solid var(--fix-border); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
+    .fix s { color: var(--danger); }
+    .mic-row { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .mic { width: 38px; height: 38px; border-radius: 50%; background: var(--danger); color: #fff; display: grid; place-items: center; }
+
+    section { padding: 64px 0; }
+    section h2 { font-size: 30px; margin: 0 0 8px; letter-spacing: -0.01em; }
+    .lead { color: var(--muted); margin: 0 0 32px; }
+
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+    .card .ico { font-size: 26px; }
+    .card h3 { margin: 8px 0 6px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: s; }
+    .step { padding: 22px; border-radius: 16px; background: var(--panel); border: 1px solid var(--border); }
+    .step::before {
+      counter-increment: s;
+      content: counter(s);
+      display: grid; place-items: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent-soft); color: var(--accent); font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .step h3 { margin: 0 0 4px; font-size: 17px; }
+    .step p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel); font-size: 15px; }
+
+    .final { text-align: center; background: var(--accent-soft); border-radius: 24px; padding: 48px 20px; margin-bottom: 48px; }
+    .final h2 { margin-bottom: 12px; }
+    .final p { color: var(--muted); margin: 0 0 24px; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px 0 40px; color: var(--muted); font-size: 14px; }
+
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; padding-top: 24px; gap: 32px; }
+      .features, .steps { grid-template-columns: 1fr; }
+      section { padding: 44px 0; }
+    }
+  </style>
 </head>
 <body>
-  <aside id="sidebar">
-    <div class="brand">小老师 <span>Luyện nói tiếng Trung</span></div>
+  <div class="wrap">
+    <nav>
+      <a href="./" class="logo">小老师<span>Luyện nói tiếng Trung</span></a>
+      <a href="app/" class="btn small">Vào luyện nói</a>
+    </nav>
 
-    <label>Trình độ
-      <select id="level">
-        <option>HSK1</option><option selected>HSK2</option><option>HSK3</option>
-        <option>HSK4</option><option>HSK5</option><option>HSK6</option>
-      </select>
-    </label>
-
-    <label>Tình huống
-      <select id="scenario">
-        <option value="">Trò chuyện tự do</option>
-        <option>Tự giới thiệu bản thân, gia đình, sở thích</option>
-        <option>Gọi món ở nhà hàng Trung Quốc (AI đóng vai phục vụ)</option>
-        <option>Mua sắm và mặc cả ở chợ (AI đóng vai người bán)</option>
-        <option>Hỏi đường và đi taxi ở Bắc Kinh</option>
-        <option>Phỏng vấn xin việc (AI đóng vai nhà tuyển dụng)</option>
-        <option>Thuyết trình giới thiệu trung tâm tiếng Trung, trả lời câu hỏi đối tác</option>
-        <option value="custom">Tự nhập tình huống…</option>
-      </select>
-    </label>
-    <input id="customScenario" class="hidden" placeholder="Ví dụ: đặt phòng khách sạn">
-
-    <div class="toggles">
-      <label class="check"><input type="checkbox" id="showPinyin" checked> Hiện pinyin</label>
-      <label class="check"><input type="checkbox" id="showVi" checked> Hiện tiếng Việt</label>
-      <label class="check"><input type="checkbox" id="autoSpeak" checked> Tự đọc câu trả lời</label>
-      <label class="check"><input type="checkbox" id="handsFree"> Chế độ gọi điện (rảnh tay)</label>
-    </div>
-
-    <label>Tốc độ đọc <span id="rateLabel">0.9x</span>
-      <input type="range" id="rate" min="0.5" max="1.3" step="0.1" value="0.9">
-    </label>
-
-    <label id="accessWrap">Mã truy cập
-      <input id="accessCode" type="password" placeholder="Giáo viên cung cấp">
-    </label>
-
-    <button id="newChat" class="ghost">+ Cuộc hội thoại mới</button>
-    <p class="hint">Dùng Chrome hoặc Edge để nói bằng micro. Trình duyệt khác vẫn gõ chữ được.</p>
-  </aside>
-
-  <main>
-    <header>
-      <button id="menuBtn" aria-label="Mở cài đặt">☰</button>
+    <header class="hero">
       <div>
-        <div class="title">小老师</div>
-        <div class="subtitle">AI có thể sai, hãy kiểm tra lại</div>
+        <h1>Nói tiếng Trung mỗi ngày với <em>gia sư AI</em></h1>
+        <p>Bấm micro và nói, AI trả lời bằng giọng nói. Mỗi câu có pinyin, bản dịch tiếng Việt, và lỗi sai được sửa ngay. Luyện bao lâu cũng được, không sợ ngại.</p>
+        <div class="cta">
+          <a href="app/" class="btn">Bắt đầu luyện nói →</a>
+          <a href="#cach-dung" class="btn ghost">Xem cách dùng</a>
+        </div>
+      </div>
+
+      <div class="demo" aria-label="Ví dụ một đoạn hội thoại">
+        <div class="bubble-user">我叫是小明，我是越南人。</div>
+        <div>
+          <div class="zh">你好，小明！你来中国多久了？</div>
+          <div class="py">Nǐ hǎo, Xiǎomíng! Nǐ lái Zhōngguó duō jiǔ le?</div>
+          <div class="vi">Chào Tiểu Minh! Bạn đến Trung Quốc bao lâu rồi?</div>
+        </div>
+        <div class="fix">Sửa lỗi: <s>我叫是小明</s> → <b>我叫小明</b><br>Sau 叫 không cần thêm 是.</div>
+        <div class="mic-row">
+          <span class="mic">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+          </span>
+          Đang nghe… hãy nói tiếng Trung
+        </div>
       </div>
     </header>
+  </div>
 
-    <section id="chat" aria-live="polite">
-      <div class="welcome">
-        <h1>你好！我是小老师。</h1>
-        <p>Bấm nút micro và nói tiếng Trung, mình sẽ trả lời và sửa lỗi cho bạn.</p>
-        <div class="starters">
-          <button>你好，我叫…</button>
-          <button>你今天怎么样？</button>
-          <button>我想练习点菜</button>
-        </div>
+  <div class="wrap">
+    <section>
+      <h2>Học như nói chuyện với người thật</h2>
+      <p class="lead">Gia sư AI 小老师 được thiết kế riêng cho học viên Việt Nam.</p>
+      <div class="features">
+        <div class="card"><div class="ico">🎙️</div><h3>Nói bằng giọng</h3><p>Nói qua micro, AI nghe và trả lời bằng giọng đọc chuẩn phổ thông.</p></div>
+        <div class="card"><div class="ico">✍️</div><h3>Sửa lỗi tức thì</h3><p>Chỉ ra câu sai, gợi ý câu tự nhiên hơn và giải thích ngắn bằng tiếng Việt.</p></div>
+        <div class="card"><div class="ico">🔤</div><h3>Pinyin & dịch nghĩa</h3><p>Bật/tắt pinyin và bản dịch tiếng Việt tuỳ trình độ của bạn.</p></div>
+        <div class="card"><div class="ico">📶</div><h3>Theo trình độ HSK</h3><p>Chọn từ HSK1 đến HSK6, AI chỉ dùng từ vựng và ngữ pháp vừa sức.</p></div>
+        <div class="card"><div class="ico">📞</div><h3>Chế độ gọi điện</h3><p>Rảnh tay: AI đọc xong là micro tự bật, luyện liên tục như gọi điện thật.</p></div>
+        <div class="card"><div class="ico">🔁</div><h3>Nghe lại không giới hạn</h3><p>Nghe lại câu trả lời và câu đã sửa, chỉnh tốc độ đọc chậm hơn khi cần.</p></div>
       </div>
     </section>
 
-    <footer>
-      <div id="status"></div>
-      <form id="composer">
-        <button type="button" id="micBtn" title="Bấm để nói">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
-        </button>
-        <textarea id="text" rows="1" placeholder="Nói hoặc gõ tiếng Trung…"></textarea>
-        <button type="submit" id="sendBtn" title="Gửi">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 4l7 7-1.4 1.4L13 7.8V20h-2V7.8l-4.6 4.6L5 11z"/></svg>
-        </button>
-      </form>
-    </footer>
-  </main>
+    <section id="cach-dung">
+      <h2>Cách dùng</h2>
+      <p class="lead">Chỉ cần điện thoại hoặc máy tính có micro.</p>
+      <div class="steps">
+        <div class="step"><h3>Mở bằng Chrome hoặc Edge</h3><p>Vào trang luyện nói, cho phép trình duyệt dùng micro khi được hỏi.</p></div>
+        <div class="step"><h3>Chọn trình độ & tình huống</h3><p>Nhập mã truy cập giáo viên cung cấp, chọn HSK và chủ đề muốn luyện.</p></div>
+        <div class="step"><h3>Bấm micro và nói</h3><p>Nói tiếng Trung tự nhiên. Xem lỗi được sửa, nghe lại và nói tiếp.</p></div>
+      </div>
+    </section>
 
-  <script src="assets/app.js"></script>
+    <section>
+      <h2>Tình huống luyện tập</h2>
+      <p class="lead">AI nhập vai để bạn luyện các tình huống thực tế, hoặc tự nhập tình huống riêng.</p>
+      <div class="tags">
+        <span class="tag">👋 Tự giới thiệu</span>
+        <span class="tag">🍜 Gọi món ở nhà hàng</span>
+        <span class="tag">🛍️ Mua sắm, mặc cả</span>
+        <span class="tag">🚕 Hỏi đường, đi taxi</span>
+        <span class="tag">💼 Phỏng vấn xin việc</span>
+        <span class="tag">🏫 Giới thiệu trung tâm với đối tác</span>
+        <span class="tag">💬 Trò chuyện tự do</span>
+      </div>
+    </section>
+
+    <div class="final">
+      <h2>Sẵn sàng nói câu tiếng Trung đầu tiên?</h2>
+      <p>Mỗi ngày 10 phút nói chuyện với AI, phản xạ sẽ nhanh hơn rõ rệt.</p>
+      <a href="app/" class="btn">Bắt đầu luyện nói →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap">小老师 · Luyện nói tiếng Trung với AI. AI có thể sai, hãy hỏi lại giáo viên khi chưa chắc.</div>
+  </footer>
 </body>
 </html>

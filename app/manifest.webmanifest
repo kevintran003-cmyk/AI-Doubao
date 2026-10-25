@@ -1,0 +1,16 @@
+{
+  "name": "小老师 – Luyện nói tiếng Trung",
+  "short_name": "小老师",
+  "description": "Luyện nói tiếng Trung với gia sư AI: nói qua micro, có pinyin, dịch tiếng Việt và sửa lỗi.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#161719",
+  "theme_color": "#4f7cff",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

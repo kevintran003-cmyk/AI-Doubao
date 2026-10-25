@@ -233,4 +233,25 @@
   }
 
   micBtn.onclick = () => (listening ? stopListening() : startListening());
+
+  // ---------- Cài app (PWA) ----------
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+  const installBtn = $('installBtn');
+  let installPrompt = null;
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    installBtn.classList.remove('hidden');
+  });
+  installBtn.onclick = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    installBtn.classList.add('hidden');
+  };
+  window.addEventListener('appinstalled', () => installBtn.classList.add('hidden'));
+  if (!standalone && /iPhone|iPad|iPod/i.test(navigator.userAgent)) $('iosHint').classList.remove('hidden');
 })();

@@ -1,2 +1,3 @@
 # Chứa API key - không bao giờ đưa lên GitHub
+app/api/config.php
 api/config.php
