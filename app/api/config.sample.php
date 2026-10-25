@@ -3,8 +3,12 @@
 // config.php đã nằm trong .gitignore nên KHÔNG bị đẩy lên GitHub.
 
 return [
-    // 'claude', 'doubao', hoặc 'demo' (thử giao diện miễn phí, không gọi AI)
-    'provider' => 'claude',
+    // 'gemini', 'claude', 'doubao', hoặc 'demo' (thử giao diện miễn phí, không gọi AI)
+    'provider' => 'gemini',
+
+    // --- Gemini (Google) --- lấy key miễn phí tại https://aistudio.google.com/apikey
+    'gemini_api_key' => '',
+    'gemini_model'   => 'gemini-2.5-flash',
 
     // --- Claude (Anthropic) --- lấy key tại https://console.anthropic.com
     'claude_api_key' => 'sk-ant-...',

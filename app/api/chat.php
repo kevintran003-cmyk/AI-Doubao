@@ -42,6 +42,7 @@ $system = build_system_prompt($level, $scenario);
 
 $raw = match ($config['provider'] ?? 'claude') {
     'doubao' => call_doubao($config, $system, $history),
+    'gemini' => call_gemini($config, $system, $history),
     'demo' => call_demo($history),
     default => call_claude($config, $system, $history),
 };
@@ -137,6 +138,33 @@ function call_doubao(array $config, string $system, array $history): string {
 
     if ($status !== 200) fail(502, 'Lỗi từ Doubao API (' . $status . '): ' . ($res['error']['message'] ?? 'không rõ'));
     return (string)($res['choices'][0]['message']['content'] ?? '');
+}
+
+function call_gemini(array $config, string $system, array $history): string {
+    if (empty($config['gemini_api_key'])) fail(500, 'Chưa điền gemini_api_key trong api/config.php');
+    $model = rawurlencode($config['gemini_model'] ?? 'gemini-2.5-flash');
+    $contents = array_map(fn($m) => [
+        'role' => $m['role'] === 'assistant' ? 'model' : 'user',
+        'parts' => [['text' => $m['content']]],
+    ], $history);
+    $body = [
+        'system_instruction' => ['parts' => [['text' => $system]]],
+        'contents' => $contents,
+        'generationConfig' => ['responseMimeType' => 'application/json'],
+    ];
+    [$status, $res] = http_post_json("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent", [
+        'x-goog-api-key: ' . $config['gemini_api_key'],
+    ], $body);
+
+    if ($status !== 200) fail(502, 'Lỗi từ Gemini API (' . $status . '): ' . ($res['error']['message'] ?? 'không rõ'));
+    if (!empty($res['promptFeedback']['blockReason'])) {
+        return json_encode(['reply_zh' => '我们换个话题吧。', 'pinyin' => 'Wǒmen huàn ge huàtí ba.', 'vi' => 'Chúng ta đổi chủ đề nhé.', 'correction' => ['has_error' => false]], JSON_UNESCAPED_UNICODE);
+    }
+    $text = '';
+    foreach ($res['candidates'][0]['content']['parts'] ?? [] as $part) {
+        if (empty($part['thought'])) $text .= $part['text'] ?? '';
+    }
+    return $text;
 }
 
 // Chế độ demo: không gọi AI, trả lời mẫu theo lượt để thử micro và giọng đọc miễn phí.
