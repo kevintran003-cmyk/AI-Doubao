@@ -140,7 +140,10 @@
     } catch (err) {
       typing.remove();
       messages.pop();
-      chat.append(el('div', 'error', '⚠ Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'));
+      const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+      chat.append(el('div', 'error', local
+        ? '⚠ Máy chủ app đã tắt. Bấm đúp chay-thu.bat để bật lại rồi gửi lại câu này.'
+        : '⚠ Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'));
     } finally {
       busy = false;
       sendBtn.disabled = false;
