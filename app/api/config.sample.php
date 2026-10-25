@@ -12,11 +12,15 @@ return [
     // low = trả lời nhanh, phù hợp hội thoại; có thể đổi thành 'medium'
     'claude_effort'  => 'low',
 
-    // --- Doubao (Volcengine Ark) --- lấy key tại https://console.volcengine.com/ark
+    // --- Doubao / Seed ---
+    // Quốc tế (dễ đăng ký từ Việt Nam): BytePlus ModelArk https://console.byteplus.com/ark
+    //   base_url: https://ark.ap-southeast.bytepluses.com/api/v3
+    // Trung Quốc (cần xác minh danh tính TQ): Volcengine https://console.volcengine.com/ark
+    //   base_url: https://ark.cn-beijing.volces.com/api/v3
     'doubao_api_key' => '',
-    // Tên model hoặc Endpoint ID (ep-xxxx) bạn đã tạo trong Ark
-    'doubao_model'   => 'doubao-seed-1-6-250615',
-    'doubao_base_url' => 'https://ark.cn-beijing.volces.com/api/v3',
+    // Copy "Model ID" (hoặc Endpoint ID ep-xxxx) từ trang Model của console
+    'doubao_model'   => '',
+    'doubao_base_url' => 'https://ark.ap-southeast.bytepluses.com/api/v3',
 
     // Mã truy cập cho học viên (để trống = ai cũng dùng được).
     // Nên đặt để người lạ không dùng hết tiền API của bạn.

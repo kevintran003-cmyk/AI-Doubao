@@ -123,7 +123,10 @@ function call_claude(array $config, string $system, array $history): string {
 }
 
 function call_doubao(array $config, string $system, array $history): string {
-    $base = rtrim($config['doubao_base_url'] ?? 'https://ark.cn-beijing.volces.com/api/v3', '/');
+    if (empty($config['doubao_api_key']) || empty($config['doubao_model'])) {
+        fail(500, 'Chưa điền doubao_api_key hoặc doubao_model trong api/config.php');
+    }
+    $base = rtrim($config['doubao_base_url'] ?? 'https://ark.ap-southeast.bytepluses.com/api/v3', '/');
     $body = [
         'model' => $config['doubao_model'] ?? '',
         'messages' => array_merge([['role' => 'system', 'content' => $system]], $history),
