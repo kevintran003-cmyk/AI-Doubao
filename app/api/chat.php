@@ -40,9 +40,11 @@ $level = preg_replace('/[^A-Za-z0-9 ]/', '', (string)($input['level'] ?? 'HSK2')
 $scenario = mb_substr(strip_tags((string)($input['scenario'] ?? '')), 0, 300);
 $system = build_system_prompt($level, $scenario);
 
-$raw = ($config['provider'] ?? 'claude') === 'doubao'
-    ? call_doubao($config, $system, $history)
-    : call_claude($config, $system, $history);
+$raw = match ($config['provider'] ?? 'claude') {
+    'doubao' => call_doubao($config, $system, $history),
+    'demo' => call_demo($history),
+    default => call_claude($config, $system, $history),
+};
 
 echo json_encode(parse_reply($raw), JSON_UNESCAPED_UNICODE);
 
@@ -134,8 +136,30 @@ function call_doubao(array $config, string $system, array $history): string {
     return (string)($res['choices'][0]['message']['content'] ?? '');
 }
 
+// Chế độ demo: không gọi AI, trả lời mẫu theo lượt để thử micro và giọng đọc miễn phí.
+function call_demo(array $history): string {
+    $replies = [
+        ['你好！我是小老师。你叫什么名字？', 'Nǐ hǎo! Wǒ shì Xiǎo lǎoshī. Nǐ jiào shénme míngzi?', 'Xin chào! Mình là Tiểu lão sư. Bạn tên là gì?'],
+        ['很高兴认识你！你是哪国人？', 'Hěn gāoxìng rènshi nǐ! Nǐ shì nǎ guó rén?', 'Rất vui được biết bạn! Bạn là người nước nào?'],
+        ['你学汉语多长时间了？', 'Nǐ xué Hànyǔ duō cháng shíjiān le?', 'Bạn học tiếng Trung bao lâu rồi?'],
+        ['你说得很好！你喜欢吃中国菜吗？', 'Nǐ shuō de hěn hǎo! Nǐ xǐhuan chī Zhōngguó cài ma?', 'Bạn nói giỏi lắm! Bạn có thích ăn món Trung Quốc không?'],
+    ];
+    $turn = count(array_filter($history, fn($m) => $m['role'] === 'user')) - 1;
+    [$zh, $py, $vi] = $replies[$turn % count($replies)];
+    return json_encode([
+        'reply_zh' => $zh,
+        'pinyin' => $py,
+        'vi' => $vi . ' (Chế độ demo: chưa kết nối AI thật)',
+        'correction' => ['has_error' => false, 'original' => '', 'corrected' => '', 'explain_vi' => ''],
+    ], JSON_UNESCAPED_UNICODE);
+}
+
 function http_post_json(string $url, array $headers, array $body): array {
     $ch = curl_init($url);
+    // PHP trên Windows không kèm chứng chỉ HTTPS; dùng kho chứng chỉ của Windows khi chạy thử trên máy.
+    if (PHP_OS_FAMILY === 'Windows' && defined('CURLSSLOPT_NATIVE_CA')) {
+        curl_setopt($ch, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+    }
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,

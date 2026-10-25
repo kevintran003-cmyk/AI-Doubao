@@ -3,7 +3,7 @@
 // config.php đã nằm trong .gitignore nên KHÔNG bị đẩy lên GitHub.
 
 return [
-    // 'claude' hoặc 'doubao'
+    // 'claude', 'doubao', hoặc 'demo' (thử giao diện miễn phí, không gọi AI)
     'provider' => 'claude',
 
     // --- Claude (Anthropic) --- lấy key tại https://console.anthropic.com

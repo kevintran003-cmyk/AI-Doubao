@@ -7,6 +7,15 @@ Trang web cho học viên nói tiếng Trung với AI (giống Doubao): nói qua
 - Máy chủ: 1 file PHP (`app/api/chat.php`) giữ API key và gọi **Claude** hoặc **Doubao**
 - Nhận dạng giọng nói & đọc: dùng sẵn của trình duyệt (Chrome / Edge, cả trên Android)
 
+## 0. Chạy thử miễn phí trên máy tính (không cần hosting)
+
+1. Cài PHP một lần: mở PowerShell, chạy `winget install PHP.PHP.8.4`
+2. Bấm đúp `chay-thu.bat` → trình duyệt tự mở `http://localhost:8000/app/`
+3. Lần đầu, file `app/api/config.php` được tạo. Đặt `'provider' => 'demo'` để thử giao diện, micro và giọng đọc mà không cần API key; khi có key thì đổi sang `'claude'` hoặc `'doubao'` và dán key.
+4. Trong Chrome/Edge có thể bấm "Cài ứng dụng lên máy" để có app riêng trên PC.
+
+Muốn tắt app: đóng cửa sổ đen của `chay-thu.bat`.
+
 ## 1. Đưa code lên GitHub
 
 1. Cài Git: https://git-scm.com/download/win
